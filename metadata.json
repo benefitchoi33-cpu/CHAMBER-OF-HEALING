@@ -1,0 +1,6 @@
+{
+  "name": "치유의방",
+  "description": "36가지 색채 심리 분석을 기반으로 맞춤형 명상 공간 테마와 치유 가이드를 제안하는 감정 치유 솔루션입니다. 심리 치유 건축가의 관점에서 공간적 감각을 제공하며, 누적된 선택 기록을 바탕으로 세밀한 감정 변화 추이를 진단해 드립니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
