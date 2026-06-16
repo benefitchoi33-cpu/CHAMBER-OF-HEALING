@@ -121,6 +121,48 @@ const recommendedHealingBehaviors: Record<number, { action: string; core: string
   36: { action: "자존감 명상", core: "스스로를 소중히 여기는 내면 아이 치유" }
 };
 
+const getCheeringQuote = (num: number, title: string): string => {
+  const quotes: Record<number, string> = {
+    1: "포근한 어리광을 부리고 싶을 만큼 쓸쓸한 하루였나요? 애써 씩씩하지 않아도 괜찮아요. 이곳의 다정한 노란빛이 당신을 따뜻하게 안아줄 거예요.",
+    2: "기쁨으로 활짝 피어난 당신의 자신감은 참 보기 좋습니다. 스스로 찬란히 빛나고 있음을 기억하며, 이 순수한 기운을 주위에도 널리 흘려보내 주세요.",
+    3: "마음의 방 한구석에 무거운 그늘이 드리워졌군요. 어둠이 짙을수록 흘러갈 빛도 준비되고 있습니다. 무리하지 말고 가만히 마음을 쉬어 가세요.",
+    4: "몸이 보내는 긴장의 메시지가 소화기로 닿았군요. 가만히 숨을 어루만지며, 일상의 과도한 압박감을 편안하게 내려놓아 보세요.",
+    5: "피로가 쌓이며 심신의 순환 기능이 지쳤던 것 같습니다. 맑은 물이 흘러 정화되듯, 오늘 당신의 무거웠던 기운들도 모두 깨끗하게 씻겨 나갈 것입니다.",
+    6: "믿음이 흐려지고 경계심이 날카로워질 만한 일들이 있었네요. 자신을 보호하기 위한 예민한 촉이었으니, 이제는 긴장감을 풀고 편히 안전하게 머무르세요.",
+    7: "마음에 남은 날선 자극과 충격적인 기억들이 평온을 뒤흔들었군요. 부드러운 치유의 손길로 아픈 흔적을 포근히 다독이고 치유해 드릴게요.",
+    8: "뜻대로 되지 않아 속상하고 억울한 감정이 꿈틀댔군요. 그 속상함을 부정하지 말고 고스란히 이곳에 털어놓으세요. 마음이 한결 가벼워 질 거예요.",
+    9: "혼자 감당하기 벅찬 고단함 속에서 소리 없이 도움을 기다리고 계셨네요. 당신은 고립된 존재가 아닙니다. 이 은은한 공간이 늘 함께 호흡하고 있습니다.",
+    10: "내면의 허기를 어떤 갈망으로 채우려 바빴던 나날이군요. 잠시 소유와 집착을 뒤로하고, 지금 이 순간 존재하는 나 자체로 가득해지는 만족감을 누리세요.",
+    11: "나의 진심과 역량을 세상에 힘 있게 펼치고 싶으셨군요. 당신의 주장은 가치 있고 당당합니다. 잠시 힘을 빼고 내면의 단단한 중심을 감각해 보세요.",
+    12: "끝없는 생각의 나래와 근심들이 의식을 어둡게 흐립니다. 머릿속의 어지러운 글자들을 하얀 안개 속에 흩뿌리며 숨결 뒤로 멀리 흘려보냅니다.",
+    13: "마음 깊은 곳 든든한 온기와 믿음직한 어깨 혹은 남성적인 애정이 그리웠던 밤입니다. 홀로 감당하던 짐을 내려놓고 고요한 온기를 음미해 보세요.",
+    14: "무언가를 채우고 싶다는 무의식적인 허전함이 있었나요? 이미 당신 안에 가장 온전하고 순수하게 채워진 사랑의 씨앗이 있음을 믿어보세요.",
+    15: "지친 육체가 마음을 조용히 두드리고 있는 날입니다. 모든 일과 판단을 멈추고 온전히 쉼에 집중하세요. 당신의 몸을 가장 귀중히 대접할 시간입니다.",
+    16: "누적된 피로 속에 뼈와 근육들이 묵직한 고단함을 하소연하네요. 단잠이 드는 침대처럼 이 공간에 몸을 폭 뉘이고 피로의 무늬를 지워 나갑니다.",
+    17: "상처와 서운함이 미움과 적의로 변해 가슴을 찌르고 있습니다. 상처 입은 날카로운 마음을 이곳의 푸른 평온 속에 고요히 희석해 흘려보냅니다.",
+    18: "더할 나위 없이 든든하고 풍성한 일상을 지나고 계시네요. 이 충만함을 편안하게 만지며, 스스로에게 따사로운 미소를 아낌없이 보내 주세요.",
+    19: "세상과 조화롭게 흐르며 수용하는 겸손한 마음의 지평을 가지고 계십니다. 비울수록 더 가득 차오르는 평화와 우아함을 누려 가세요.",
+    20: "마음에 따스한 그리움과 이성적인 섬세한 애정이 보드랍게 움트고 있군요. 그 애틋하고도 아름다운 떨림을 이곳에 고요히 뉘여 간직해 둡니다.",
+    21: "주변을 돌보고 이타적으로 희생하기 위해 애써온 당신. 오늘은 타인 대신 수고 많았던 나 자신에게 가장 정성스럽고 무한한 보살핌을 배풀어주세요.",
+    22: "억눌린 긴장감이 충동처럼 번쩍이며 마음을 세차게 흔들었군요. 거센 감정의 폭풍 뒤 부는 잔잔한 바람에 기댄 채 가쁜 숨을 차분히 가다듬어 보세요.",
+    23: "새벽하늘을 여는 맑은 서광처럼, 당신의 길에 눈부신 희망이 떠오르고 있습니다. 내면의 맑은 거울 속에 비친 당신의 소망은 곧 현실로 다가옵니다.",
+    24: "조급한 시계 소리처럼 마음이 타들어가고 긴장이 차올랐나요? 괜찮아요, 조급해하지 않아도 모든 꽃은 저마다의 계절을 따라 비로소 피어납니다.",
+    25: "자신을 향한 자존감이 돋보이지만 마음이 다소 방실대며 들떴을 수 있습니다. 들뜬 기류를 차분히 가라앉히며 좀 더 맑고 투명한 지혜와 마주하세요.",
+    26: "밝게 웃고 있지만 마음 한편엔 숨겨둔 조그만 걱정과 조바심이 숨 쉬고 있군요. 그 겉모습과 속모습 모두가 당신의 소중하고 자연스러운 한 면입니다.",
+    27: "어떤 큰 흐름에 온전히 몸과 마음을 내맡긴 채 평안을 누리는 깊은 신비로운 상태입니다. 사랑으로 가득 찬 고요가 영혼을 부드럽게 감싸줍니다.",
+    28: "정서적이거나 물질적으로 채워지지 않은 배고픔이 느껴지네요. 차 한 잔의 여유를 통해 가장 단순하면서도 포근한 감각부터 달콤하게 채워 주세요.",
+    29: "선택의 갈림길 앞에서 서성거리며 막연한 답답함을 느끼고 있군요. 정답은 이미 당신의 정화된 내면 안에 보석처럼 기다리고 있습니다.",
+    30: "소화기에서 정서로 정화가 고프다는 신호를 부드럽게 주고 있네요. 위장의 결을 쓸어내리는 따스한 보듬이 가슴 깊은 응어리까지 고요히 녹여줍니다.",
+    31: "잠 못 드는 깊은 밤의 피로가 머리와 눈가를 무겁게 누르고 있네요. 어지러운 생각들을 밤하늘에 띄워 보내고 가장 평온한 숨소리에만 귀 기울여 보세요.",
+    32: "정서적 흔들림과 불안정이 물결처럼 굽이치는 날이군요. 흔들리는 물결도 언젠가는 호수의 거울처럼 고요해집니다. 이 공간이 든든한 닻이 되어 줄게요.",
+    33: "오래된 마음에 쓸 데 없는 엉클어짐을 한 장 한 장 가지런히 청소하고 계시군요. 홀가분한 가벼움으로 비워낸 자리에 싱그러운 새바람이 찾아올 것입니다.",
+    34: "기나긴 터널을 지나 비로소 건강하고 평화롭게 소생하는 기적을 느끼는 시간입니다. 단단해진 마음에 돋아날 희망의 푸른 잎사귀들을 축하합니다.",
+    35: "가장 포근한 모성 혹은 여성적인 섬세하고 따사로운 애정이 간간이 그리우셨나요? 사랑과 돌봄의 공간이 늘 당신 주변에 머무르고 있습니다.",
+    36: "사랑받지 못하고 채워지지 않는 슬픔과 결핍이 내면의 아이를 울리고 있었네요. 세상의 그 누구도 아닌 당신의 손길이 지금 그 아이를 안아줍니다."
+  };
+  return quotes[num] || `당신의 ${title} 상태를 가장 평온하게 보살펴 드릴게요. 마음을 놓고 편안히 가라앉혀 보십시오.`;
+};
+
 interface BGMPreset {
   id: string;
   name: string;
@@ -420,8 +462,8 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
 
   const currentMethod = getMeditationMethodKeywords(selectedProfile?.num || 1);
   const breathCycleLength = (currentMethod.rhythm.inhale || 4) + (currentMethod.rhythm.hold || 0) + (currentMethod.rhythm.exhale || 4);
-  const totalDuration = breathCycleLength * 5; // Exactly 5 repetitions/cycles of the breathing rhythm
-  const totalSteps = 5; // Each step represents 1 full cycle
+  const totalDuration = breathCycleLength * 3; // Exactly 3 repetitions/cycles of the breathing rhythm
+  const totalSteps = 3; // Each step represents 1 full cycle
   const durationPerStep = breathCycleLength;
 
   // Compute active step index and step seconds left
@@ -502,7 +544,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
       setBreathPhase("inhale");
       setBreathCounter(method.rhythm.inhale);
       const cycleDuration = method.rhythm.inhale + method.rhythm.hold + method.rhythm.exhale;
-      setTotalSeconds(cycleDuration * 5); // 5 cycles of custom breathing rhythm
+      setTotalSeconds(cycleDuration * 3); // 3 cycles of custom breathing rhythm
       setMeditationCompleted(false);
     } else {
       setTotalSeconds(180);
@@ -850,7 +892,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
     setMeditationCompleted(false);
     const method = getMeditationMethodKeywords(selectedProfile?.num || 1);
     const cycleDuration = method.rhythm.inhale + method.rhythm.hold + method.rhythm.exhale;
-    setTotalSeconds(cycleDuration * 5); // 5 cycles of custom breathing rhythm
+    setTotalSeconds(cycleDuration * 3); // 3 cycles of custom breathing rhythm
     setBreathPhase("inhale");
     setBreathCounter(method.rhythm.inhale);
     if (isReading) {
@@ -1302,41 +1344,24 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
 
                     {/* Atmospheric Sound Synthesizer with Selection */}
                     <div className="bg-white/80 p-6 rounded-3xl border border-white/80 shadow-md space-y-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-3">
+                      <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100 shrink-0">
                             <Music className="w-5 h-5 text-indigo-600" />
                           </div>
                           <div>
-                            <h5 className="text-xs font-extrabold text-slate-800">정화 호흡 동반 사운드 스케이프</h5>
-                            <p className="text-[10px] text-slate-400 font-sans mt-0.5">
-                              인공지능 진단 추천 BGM환경: <strong className="text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded font-bold">{healingData.meditationAmbientSoundName}</strong>
-                            </p>
+                            <h5 className="text-xs font-extrabold text-slate-800">치유의 BGM 사운드스케이프</h5>
                           </div>
                         </div>
 
-                        <button
-                          onClick={toggleSound}
-                          className={`w-full sm:w-auto text-xs font-mono font-bold px-4 py-2.5 rounded-xl transition-all duration-300 border flex items-center justify-center gap-2 cursor-pointer
-                            ${
-                              soundPlaying
-                                ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
-                                : "bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-slate-50 shadow-xs"
-                            }
-                          `}
-                        >
-                          {soundPlaying ? (
-                            <>
-                              <VolumeX className="w-4 h-4 animate-pulse" />
-                              BGM 끄기 (Mute)
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 className="w-4 h-4" />
-                              BGM 켜기 (Play)
-                            </>
-                          )}
-                        </button>
+                        {soundPlaying && (
+                          <button
+                            onClick={stopHealingSound}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs px-4 py-2.5 font-bold flex items-center justify-center gap-2 transition cursor-pointer border border-indigo-500/25 shadow-md shadow-indigo-100/50"
+                          >
+                            <VolumeX className="w-4 h-4" /> BGM 끄기
+                          </button>
+                        )}
                       </div>
 
                       {/* BGM Preset Grid Selector */}
@@ -1348,14 +1373,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                               key={preset.id}
                               onClick={() => {
                                 setSelectedBgmId(preset.id);
-                                if (!soundPlaying) {
-                                  startHealingSound(preset.id);
-                                } else {
-                                  stopHealingSound();
-                                  setTimeout(() => {
-                                    startHealingSound(preset.id);
-                                  }, 800);
-                                }
+                                startHealingSound(preset.id);
                               }}
                               className={`flex items-start text-left p-3 rounded-2xl border transition-all duration-200 cursor-pointer ${
                                 selectedBgmId === preset.id
@@ -1401,16 +1419,17 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                   return (
                     <motion.div
                       key="meditation-completed"
-                      initial={{ opacity: 0, scale: 0.98 }}
+                      initial={{ opacity: 0, scale: 0.96 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="space-y-8 animate-fade-in"
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      className="space-y-12"
                     >
                       {/* Celebration Card */}
-                      <div className="bg-white/90 backdrop-blur-md border border-indigo-100/50 rounded-[32px] p-8 md:p-10 shadow-xl relative overflow-hidden text-center max-w-2xl mx-auto">
-                        {/* Soft ambient aura background */}
+                      <div className="bg-white/95 backdrop-blur-md border border-indigo-150/60 rounded-[36px] p-8 md:p-12 shadow-2xl relative overflow-hidden text-center max-w-2xl mx-auto">
+                        
+                        {/* Soft floating ambient orbs based on the active profile color */}
                         <div 
-                          className="absolute w-64 h-64 opacity-10 filter blur-3xl pointer-events-none -right-12 -top-12"
+                          className="absolute w-80 h-80 opacity-[0.12] filter blur-3xl pointer-events-none -right-16 -top-16 animate-pulse"
                           style={{
                             background: selectedProfile?.colors.type === "solid" 
                               ? selectedProfile?.colors.fill 
@@ -1418,7 +1437,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                           }}
                         />
                         <div 
-                          className="absolute w-64 h-64 opacity-10 filter blur-3xl pointer-events-none -left-12 -bottom-12"
+                          className="absolute w-80 h-80 opacity-[0.12] filter blur-3xl pointer-events-none -left-16 -bottom-16 animate-pulse"
                           style={{
                             background: selectedProfile?.colors.type === "solid" 
                               ? selectedProfile?.colors.fill 
@@ -1427,34 +1446,71 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                         />
 
                         <div className="relative z-10 flex flex-col items-center">
-                          {/* Success Icon Circle */}
-                          <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-6 shadow-xs text-indigo-600">
-                            <CheckCircle2 className="w-8 h-8 animate-[pulse_2.5s_ease-in-out_infinite]" />
+                          
+                          {/* Beautiful concentric breathing circle completion animation */}
+                          <div className="relative w-32 h-32 flex items-center justify-center mb-6">
+                            {/* Outer radiating circle */}
+                            <motion.div 
+                              className="absolute inset-0 rounded-full bg-indigo-100/30 border border-indigo-200/50"
+                              animate={{ scale: [1, 1.4, 1], opacity: [0.3, 0, 0.3] }}
+                              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                            />
+                            {/* Middle radiating circle */}
+                            <motion.div 
+                              className="absolute w-24 h-24 rounded-full bg-indigo-50/50 border border-indigo-100/70"
+                              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.1, 0.5] }}
+                              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1.5 }}
+                            />
+                            {/* Center solid gold icon badge */}
+                            <motion.div 
+                              className="w-16 h-16 rounded-2xl bg-indigo-600/10 border border-indigo-250 flex items-center justify-center text-indigo-600 shadow-sm z-10"
+                              initial={{ scale: 0.8 }}
+                              animate={{ scale: 1 }}
+                              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                            >
+                              <Award className="w-8 h-8 text-indigo-605 animate-bounce" />
+                            </motion.div>
                           </div>
 
-                          <span className="font-mono text-[10px] text-indigo-500 uppercase tracking-widest font-black block mb-2">
-                            Mindfulness Ritual Completed
-                          </span>
-                          
-                          <h4 className="font-serif text-2xl font-black text-slate-900 leading-tight">
-                            기품 깊은 정화 수련 완료
-                          </h4>
+                          <div className="space-y-2">
+                            <span className="font-mono text-[10px] text-indigo-500 uppercase tracking-widest font-black bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100/40">
+                              Mindfulness Journey Complete
+                            </span>
+                            <h4 className="font-serif text-3xl font-black text-slate-900 tracking-tight pt-2">
+                              명상이 모두 끝났습니다
+                            </h4>
+                          </div>
 
-                          <p className="text-slate-600 text-sm mt-4 leading-relaxed font-sans max-w-md">
-                            "5회의 평온한 호흡 주기 조율이 성공적으로 끝마쳤습니다! 당신이 설계한 치유의 침실 주파수 속에서 마침내 정서와 슬픔이 곱게 흩어지며, 마음속 자율신경계가 안정적인 평형 상태를 복원해 가고 있습니다. 한껏 맑아진 마음의 기후를 가만히 누려 보십시오."
+                          {/* Customized Emotional Support/Cheering Bubble (감정별 응원멘트) */}
+                          <motion.div
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.3 }}
+                            className="mt-6 p-6 rounded-2xl bg-amber-50/65 border border-amber-200/40 text-left max-w-lg relative"
+                          >
+                            <span className="absolute -top-3 left-4 bg-amber-250 text-amber-950 font-bold font-sans text-[9px] px-2.5 py-0.5 rounded-md uppercase tracking-wider">
+                              {selectedProfile?.title} 응원 메세지
+                            </span>
+                            <p className="text-[#5C4524] text-xs font-serif font-medium leading-relaxed pt-1.5 italic">
+                              "{getCheeringQuote(selectedProfile?.num || 1, selectedProfile?.title || "")}"
+                            </p>
+                          </motion.div>
+
+                          <p className="text-slate-500 text-xs mt-5 leading-normal font-sans max-w-sm">
+                            성공적으로 심신 오차가 조율되었습니다. 마음속 일렁임과 걱정이 치유의 파동 속에서 정돈되었습니다. 깨끗해진 마음의 기온을 조용히 품에 담아두세요.
                           </p>
 
                           {/* Quick Actions inside completed view */}
                           <div className="mt-8 flex flex-wrap gap-3 justify-center">
                             <button
                               onClick={resetTimer}
-                              className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-5 rounded-xl transition-all shadow-md shadow-indigo-100 cursor-pointer"
+                              className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md shadow-indigo-100 hover:shadow-lg hover:shadow-indigo-150 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                             >
                               명상 한번 더 하기 <RotateCcw className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={onReset}
-                              className="flex items-center gap-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-5 rounded-xl transition-all shadow-md cursor-pointer"
+                              className="flex items-center gap-1.5 text-xs bg-slate-950 hover:bg-slate-900 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                             >
                               다른 방 설계하기 <Palette className="w-3.5 h-3.5" />
                             </button>
@@ -1462,25 +1518,26 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                         </div>
                       </div>
 
-                      {/* Deep Analysis Component inside the final completed view as requested */}
-                      <div className="border-t border-slate-200/50 pt-8">
-                        <div className="max-w-4xl mx-auto">
-                          <div className="mb-6 flex flex-col items-center text-center">
-                            <span className="font-mono text-[9px] text-[#4E412C] font-black bg-amber-50/80 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider block w-fit">
-                              Archive Deep Progression Analysis (아카이브 심화분석)
-                            </span>
-                            <h4 className="font-serif text-xl font-bold text-slate-900 mt-2">차원적 무의식 아카이빙 진찰 리포트</h4>
-                            <p className="text-slate-400 text-xs mt-1">지금껏 누적된 치유 주파수 데이터와 평온의 궤적을 심화 분석한 최종 임상 소견입니다.</p>
-                          </div>
+                      {/* Navigate to Step 5 (Deep Analysis) block */}
+                      <div className="border-t border-slate-200/50 pt-10">
+                        <div className="max-w-xl mx-auto text-center bg-white/75 backdrop-blur-md rounded-3xl p-8 border border-white/80 shadow-lg">
+                          <span className="font-mono text-[9px] text-[#4E412C] font-black bg-amber-50/80 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider block mx-auto w-fit">
+                            Step 5 Integration Analysis
+                          </span>
+                          <h4 className="font-serif text-xl font-bold text-slate-900 mt-2.5">차원적 무의식 아카이빙 진찰 리포트</h4>
+                          <p className="text-slate-500 text-xs mt-2 leading-relaxed max-w-sm mx-auto">
+                            지금껏 누적된 치유 주파수 데이터와 내면의 평온 궤적을 통합하여 심층 진단한 결과를 확인하시겠습니까?
+                          </p>
                           
-                          <DeepAnalysis 
-                            historyList={historyList} 
-                            onSelectItem={(num) => {
-                              onSelectItem(num);
-                              setStep(2); // take back to Step 2 when selecting an archive item
-                            }}
-                            onClearHistory={onClearHistory}
-                          />
+                          <div className="mt-6">
+                            <button
+                              onClick={() => setStep(5)}
+                              className="inline-flex items-center gap-1.5 text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-md shadow-amber-100 hover:shadow-lg hover:shadow-amber-150 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                            >
+                              <span>아카이브 심화 분석하기</span>
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -1535,7 +1592,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                               🌬️ 맞춤형 의학 조율 단계별 호흡법 ({currentMethod.rhythm.inhale}s - {currentMethod.rhythm.hold}s - {currentMethod.rhythm.exhale}s 템포)
                             </span>
                             <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-bold font-mono">
-                              구조화된 5회 반복 기압 적용
+                              구조화된 3회 반복 적용
                             </span>
                           </div>
                           
@@ -1627,7 +1684,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                           {/* Digital countdown */}
                           <div className="relative z-20 flex flex-col items-center">
                             <span className="font-mono text-[11px] font-black text-indigo-700 bg-indigo-50/90 px-2 py-0.5 rounded-full border border-indigo-200/40 mb-2 shadow-xs animate-bounce" style={{ animationDuration: "3s" }}>
-                              {currentStepIdx + 1} / 5회
+                              {currentStepIdx + 1} / 3회
                             </span>
                             <span className="font-mono text-3xl font-black text-slate-950 tracking-tight leading-none">
                               {formatTime(stepSecondsLeft)}
@@ -1662,17 +1719,14 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                             )}
                           </button>
 
-                          <button
-                            onClick={toggleSound}
-                            className={`text-xs px-3 py-2 rounded-xl border flex items-center gap-1 transition-all cursor-pointer ${
-                              soundPlaying
-                                ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                                : "bg-white text-slate-600 border-slate-200 hover:border-indigo-200"
-                            }`}
-                          >
-                            {soundPlaying ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                            {soundPlaying ? "소리 끄기" : "배경음 켜기"}
-                          </button>
+                          {soundPlaying && (
+                            <button
+                              onClick={stopHealingSound}
+                              className="text-xs px-3 py-2 rounded-xl border bg-indigo-50 text-indigo-700 border-indigo-200 flex items-center gap-1 transition-all cursor-pointer"
+                            >
+                              <VolumeX className="w-3.5 h-3.5" /> 소리 끄기
+                            </button>
+                          )}
 
                           <button
                             onClick={resetTimer}
@@ -1681,12 +1735,6 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                           >
                             <RotateCcw className="w-3.5 h-3.5" />
                           </button>
-                        </div>
-
-                        <div className="mt-4 text-[10px] text-slate-450 font-sans space-y-1">
-                          <div>
-                            추천 사운드환경: <strong className="text-indigo-600 font-bold">{healingData.meditationAmbientSoundName}</strong>
-                          </div>
                         </div>
 
                         {/* Live BGM Presets Panel in Step 4 */}
@@ -1702,14 +1750,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                                   key={p.id}
                                   onClick={() => {
                                     setSelectedBgmId(p.id);
-                                    if (soundPlaying) {
-                                      stopHealingSound();
-                                      setTimeout(() => {
-                                        startHealingSound(p.id);
-                                      }, 800);
-                                    } else {
-                                      startHealingSound(p.id);
-                                    }
+                                    startHealingSound(p.id);
                                   }}
                                   className={`text-[10px] text-left p-2 rounded-xl border transition-all truncate cursor-pointer ${
                                     isSelected

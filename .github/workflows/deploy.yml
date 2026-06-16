@@ -33,7 +33,6 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-size: '20'
           node-version: 20
           cache: 'npm'
 
@@ -41,7 +40,9 @@ jobs:
         run: npm ci
 
       - name: Build static files
-        run: npm run build
+        run: |
+          npm run build
+          touch dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

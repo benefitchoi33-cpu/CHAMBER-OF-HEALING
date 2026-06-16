@@ -85,7 +85,7 @@ export const ColorGrid: React.FC<ColorGridProps> = ({ onSelect, selectedNum }) =
         </p>
       </div>
 
-      <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-6 lg:grid-cols-9 gap-4 md:gap-5 relative z-10">
+      <div className="grid grid-cols-6 sm:grid-cols-9 md:grid-cols-9 lg:grid-cols-9 gap-1.5 sm:gap-3 md:gap-4 relative z-10">
         {Object.values(colorProfiles).map((profile) => {
           const isSelected = selectedNum === profile.num;
           return (
@@ -93,7 +93,7 @@ export const ColorGrid: React.FC<ColorGridProps> = ({ onSelect, selectedNum }) =
               key={profile.num}
               id={`color-circle-btn-${profile.num}`}
               onClick={() => onSelect(profile.num)}
-              className={`relative flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-300 group
+              className={`relative flex flex-col items-center justify-center p-1 sm:p-2 rounded-xl transition-all duration-300 group
                 ${
                   isSelected
                     ? "bg-white/80 ring-2 ring-indigo-500/20 border border-indigo-200/50 shadow-md transform scale-105"
@@ -103,18 +103,13 @@ export const ColorGrid: React.FC<ColorGridProps> = ({ onSelect, selectedNum }) =
             >
               {/* Animated hover glow element */}
               <div
-                className={`absolute inset-0 rounded-2xl bg-radial from-indigo-100/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}
+                className={`absolute inset-0 rounded-xl bg-radial from-indigo-100/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}
               />
 
               {/* Programmatic SVG Color Circle */}
               <div className="relative group-hover:scale-110 transition-transform duration-200 z-10">
-                <ColorCircle profile={profile} size={48} />
+                <ColorCircle profile={profile} size={36} />
               </div>
-
-              {/* Number tag */}
-              <span className={`font-mono text-[11px] font-bold mt-1.5 z-10 ${isSelected ? "text-indigo-600" : "text-slate-500"}`}>
-                {profile.num}
-              </span>
             </button>
           );
         })}
