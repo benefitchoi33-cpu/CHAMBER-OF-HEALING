@@ -1,31 +1,85 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ColorCircle } from "./ColorGrid.tsx";
 import { ColorProfile, colorProfiles } from "../colorData.ts";
-import { Play, Pause, RotateCcw, Volume2, VolumeX, Sparkles, Footprints, Wind, Sun, ChevronLeft, ChevronRight, Palette, Activity, Music, Waves } from "lucide-react";
+import { chamberDetails } from "../chamberData.ts";
+import { Play, Pause, RotateCcw, Volume2, VolumeX, Sparkles, Footprints, Wind, Sun, ChevronLeft, ChevronRight, Palette, Activity, Music, Waves, CheckCircle2, Award } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { DeepAnalysis } from "./DeepAnalysis.tsx";
 
-// Curated high-resolution Unsplash meditation, architectural, and zen chamber images for each profile number
+// Curated high-resolution Unsplash meditation, architectural, and zen chamber images for each of the 36 profiles
 const getChamberImageUrl = (profileNum: number): string => {
   const images: Record<number, string> = {
-    1: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200&auto=format&fit=crop", // Warm Sunlit room (yellow)
-    2: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop", // Cozy Loft Sunbeam (red/white)
-    3: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop", // Deep twilight space (dark purple)
-    4: "https://images.unsplash.com/photo-1620023640243-d34fb05822ee?q=80&w=1200&auto=format&fit=crop", // soft peach/sunset terrace
-    5: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop", // Blue hour retreat (brown/blue)
-    6: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop", // Brutalist black zen garden interior
-    7: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1200&auto=format&fit=crop", // Purple-magenta-crimson light stream
-    8: "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=1200&auto=format&fit=crop", // Dark minimal wood room
-    9: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1200&auto=format&fit=crop", // Green foggy forest temple window
-    10: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop", // Rich dark study room
+    1: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop", // Cozy Warm Bedroom (cocoon)
+    2: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1200&auto=format&fit=crop", // Sunny Terrace Double Height
+    3: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop", // Deep Blue Ocean Retreat
+    4: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop", // Earth Clay Warm Teahouse
+    5: "https://images.unsplash.com/photo-1508333706533-1ab43ecb1606?q=80&w=1200&auto=format&fit=crop", // Stone Water Channel Temple
+    6: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1200&auto=format&fit=crop", // Concrete Heavy Guarded Vault
+    7: "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=1200&auto=format&fit=crop", // Glowing Rose Circular Loop Hallway
+    8: "https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?q=80&w=1200&auto=format&fit=crop", // Sound-absorbing Basalt Dark Box
+    9: "https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1200&auto=format&fit=crop", // Symmetrical Sacred Oculus Dome Hallway
+    10: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=1200&auto=format&fit=crop", // Sunlit Symmetrical White Swift/Metal room
+    11: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?q=80&w=1200&auto=format&fit=crop", // Red Obelisk Tower Atrium
+    12: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop", // Bamboo Maze Quiet Garden Path
+    13: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=1200&auto=format&fit=crop", // Wood Study Room with Bookcases (Oak)
+    14: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop", // Sorrow Brown Clay Chamber
+    15: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1200&auto=format&fit=crop", // Soft Amethyst Lavender Curved Wall Cave
+    16: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=1200&auto=format&fit=crop", // Deep Sea Submarine Capsule
+    17: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=1200&auto=format&fit=crop", // Sharp Angular Quarry Obsidian Room
+    18: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=1200&auto=format&fit=crop", // Sunkissed Central Courtyard with Teak floor
+    19: "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?q=80&w=1200&auto=format&fit=crop", // Submerged Humble Ground Garden Earth
+    20: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=1200&auto=format&fit=crop", // Rose Red Lounge Velvet Glow
+    21: "https://images.unsplash.com/photo-1471039497385-b6d6ba609f9c?q=80&w=1200&auto=format&fit=crop", // White Pure Holy Sanctuary
+    22: "https://images.unsplash.com/photo-1594489428504-5c0c480a15fd?q=80&w=1200&auto=format&fit=crop", // Industrial Sandblast Boxing/Meditation Dojo
+    23: "https://images.unsplash.com/photo-1504297050568-910d24c426d3?q=80&w=1200&auto=format&fit=crop", // Golden Morning Sunshine Glass Ceiling Loft
+    24: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop", // Linear Wood Slat Grid calming path
+    25: "https://images.unsplash.com/photo-1527269537047-40fbe503411c?q=80&w=1200&auto=format&fit=crop", // High Tower Observatory deck with infinite glass windows
+    26: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop", // Twilight Saloon with symmetric fireplace hearth
+    27: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop", // Cathedral tall light shafts
+    28: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200&auto=format&fit=crop", // Beautiful plants kitchen deck
+    29: "https://images.unsplash.com/photo-1615874959474-d609969a20ed?q=80&w=1200&auto=format&fit=crop", // Monolithic dark corridor
+    30: "https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?q=80&w=1200&auto=format&fit=crop", // Deep indigo glass reflection deck
+    31: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=1200&auto=format&fit=crop", // Ultra black cozy bed capsule
+    32: "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?q=80&w=1200&auto=format&fit=crop", // Granite underground shelter
+    33: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?q=80&w=1200&auto=format&fit=crop", // Symmetric grid gallery
+    34: "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop", // High water healing atrium
+    35: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200&auto=format&fit=crop", // Soft round plaster alcove bedroom
+    36: "https://images.unsplash.com/photo-1505312980407-af1521206bad?q=80&w=1200&auto=format&fit=crop"  // Golden light brass bedroom
   };
-  const fallbacks = [
-    "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop", // White zen bedroom
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop", // Modern glass/water architecture
-    "https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=1200&auto=format&fit=crop", // warm fireplace cabin
-    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop", // Sunset seaside yoga deck
-    "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=1200&auto=format&fit=crop", // Moss zen garden temple
-  ];
-  return images[profileNum] || fallbacks[profileNum % fallbacks.length];
+  return images[profileNum] || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1200&auto=format&fit=crop";
+};
+
+// Robust sentence splitter with support for typical Korean punctuation and newlines
+const splitDescriptionToSentences = (desc: string): string[] => {
+  if (!desc) return [];
+  const rawParts = desc.split(/([.!?\n])/);
+  const result: string[] = [];
+  let currentSentence = "";
+  
+  for (let i = 0; i < rawParts.length; i++) {
+    const part = rawParts[i];
+    if (part === undefined || part === null) continue;
+    if (/[.!?\n]/.test(part)) {
+      if (part === "\n") {
+        if (currentSentence.trim()) {
+          result.push(currentSentence.trim());
+          currentSentence = "";
+        }
+      } else {
+        currentSentence += part;
+        if (currentSentence.trim()) {
+          result.push(currentSentence.trim());
+          currentSentence = "";
+        }
+      }
+    } else {
+      currentSentence += part;
+    }
+  }
+  if (currentSentence.trim()) {
+    result.push(currentSentence.trim());
+  }
+  return result.filter(s => s.length > 0);
 };
 
 const recommendedHealingBehaviors: Record<number, { action: string; core: string }> = {
@@ -340,6 +394,9 @@ interface ChamberWindowProps {
   loading: boolean;
   step: number;
   setStep: (step: number) => void;
+  historyList: any[];
+  onSelectItem: (num: number) => void;
+  onClearHistory: () => void;
   onReset: () => void;
 }
 
@@ -349,17 +406,23 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
   loading,
   step,
   setStep,
+  historyList,
+  onSelectItem,
+  onClearHistory,
   onReset,
 }) => {
   // Meditation Timer States
   const [timerActive, setTimerActive] = useState<boolean>(false);
-  const [totalSeconds, setTotalSeconds] = useState<number>(300); // Dynamic standard based on steps
+  const [totalSeconds, setTotalSeconds] = useState<number>(60); // Overridden dynamically below based on 5 selected profile cycles
   const [breathPhase, setBreathPhase] = useState<"inhale" | "hold" | "exhale">("inhale");
   const [breathCounter, setBreathCounter] = useState<number>(4); // 4-second intervals (4-4-4)
+  const [meditationCompleted, setMeditationCompleted] = useState<boolean>(false);
 
-  const totalSteps = healingData?.meditationSteps?.length || 5;
-  const durationPerStep = 60; // 60 seconds per step
-  const totalDuration = totalSteps * durationPerStep;
+  const currentMethod = getMeditationMethodKeywords(selectedProfile?.num || 1);
+  const breathCycleLength = (currentMethod.rhythm.inhale || 4) + (currentMethod.rhythm.hold || 0) + (currentMethod.rhythm.exhale || 4);
+  const totalDuration = breathCycleLength * 5; // Exactly 5 repetitions/cycles of the breathing rhythm
+  const totalSteps = 5; // Each step represents 1 full cycle
+  const durationPerStep = breathCycleLength;
 
   // Compute active step index and step seconds left
   const currentStepIdx = Math.min(
@@ -403,6 +466,7 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
           if (prev <= 1) {
             setTimerActive(false);
             stopHealingSound();
+            setMeditationCompleted(true);
             return 0;
           }
           return prev - 1;
@@ -437,11 +501,12 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
       const method = getMeditationMethodKeywords(selectedProfile.num);
       setBreathPhase("inhale");
       setBreathCounter(method.rhythm.inhale);
-    }
-    if (healingData && healingData.meditationSteps) {
-      setTotalSeconds(healingData.meditationSteps.length * 60);
+      const cycleDuration = method.rhythm.inhale + method.rhythm.hold + method.rhythm.exhale;
+      setTotalSeconds(cycleDuration * 5); // 5 cycles of custom breathing rhythm
+      setMeditationCompleted(false);
     } else {
-      setTotalSeconds(300);
+      setTotalSeconds(180);
+      setMeditationCompleted(false);
     }
   }, [selectedProfile, step, healingData]);
 
@@ -782,10 +847,11 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
 
   const resetTimer = () => {
     setTimerActive(false);
-    const totalSteps = healingData?.meditationSteps?.length || 5;
-    setTotalSeconds(totalSteps * 60);
-    setBreathPhase("inhale");
+    setMeditationCompleted(false);
     const method = getMeditationMethodKeywords(selectedProfile?.num || 1);
+    const cycleDuration = method.rhythm.inhale + method.rhythm.hold + method.rhythm.exhale;
+    setTotalSeconds(cycleDuration * 5); // 5 cycles of custom breathing rhythm
+    setBreathPhase("inhale");
     setBreathCounter(method.rhythm.inhale);
     if (isReading) {
       stopSpeaking();
@@ -1109,15 +1175,10 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
 
               {/* STAGE 3: ENTERING THE CHAMBER */}
               {step === 3 && (() => {
-                // Split space description into sentences robustly
-                const rawSentences = healingData.spaceThemeDescription
-                  ? healingData.spaceThemeDescription
-                      .split(/[.!?]/)
-                      .map((s) => s.trim())
-                      .filter((s) => s.length > 3)
-                      .map((s) => (s.endsWith(".") || s.endsWith("!") || s.endsWith("?") ? s : s + "."))
-                  : [];
-                const slides = rawSentences.length > 0 ? rawSentences : [healingData.spaceThemeDescription || ""];
+                const chamberImage = getChamberImageUrl(selectedProfile.num);
+                const sentences = splitDescriptionToSentences(healingData.spaceThemeDescription);
+                const currentSentenceIdx = Math.max(0, Math.min(activeSlideIndex, sentences.length - 1));
+                const activeSentence = sentences[currentSentenceIdx] || "";
 
                 return (
                   <motion.div
@@ -1129,17 +1190,24 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                     className="space-y-6"
                   >
                     {/* Unified Architectural Render Card with Overlay text */}
-                    <div className="relative rounded-[32px] overflow-hidden min-h-[460px] border border-slate-950/20 shadow-2xl p-6 md:p-8 flex flex-col justify-between text-white bg-slate-900">
+                    <div className="relative rounded-[32px] overflow-hidden min-h-[460px] border border-slate-950/20 shadow-2xl p-6 md:p-8 flex flex-col justify-between text-white bg-slate-900 group">
                       {/* Image background cover */}
-                      <img
-                        src={getChamberImageUrl(selectedProfile.num)}
-                        alt={healingData.spaceThemeTitle}
-                        referrerPolicy="no-referrer"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[10000ms] ease-out scale-100 group-hover:scale-105 pointer-events-none"
-                      />
+                      <div className="absolute inset-0 z-0">
+                        <motion.img
+                          key={selectedProfile.num}
+                          src={chamberImage}
+                          alt={healingData.spaceThemeTitle}
+                          referrerPolicy="no-referrer"
+                          initial={{ opacity: 0, scale: 1.05 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                        />
+                      </div>
+
                       {/* Mix-blend color profile overlay */}
                       <div 
-                        className="absolute inset-0 opacity-25 mix-blend-color pointer-events-none z-0"
+                        className="absolute inset-0 opacity-25 mix-blend-color pointer-events-none z-1"
                         style={{
                           background: selectedProfile.colors.type === "solid" 
                             ? selectedProfile.colors.fill 
@@ -1147,79 +1215,84 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
                         }}
                       />
                       {/* Pure dark heavy gradient overlay for maximum reading legibility */}
-                      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/70 to-slate-950/90 pointer-events-none z-0" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/70 to-slate-950/95 pointer-events-none z-1" />
 
                       {/* Header block within card */}
-                      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
-                        <div>
-                          <span className="font-mono text-[9px] text-indigo-300 uppercase tracking-widest font-black flex items-center gap-1">
-                            <Sun className="w-3 h-3 text-indigo-350 animate-pulse" /> Virtual Architectural Formulation
+                      <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-4">
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className="inline-block w-2.5 h-2.5 rounded-full ring-2 ring-white/20"
+                            style={{
+                              background: selectedProfile.colors.type === "solid" 
+                                ? selectedProfile.colors.fill 
+                                : selectedProfile.colors.leftFill
+                            }}
+                          />
+                          <span className="font-serif text-lg md:text-xl font-bold tracking-tight text-white">
+                            #{selectedProfile.num} {selectedProfile.title} 공간
                           </span>
-                          <h4 className="font-serif text-xl md:text-2xl font-black text-white mt-1.5 leading-snug">
-                            {healingData.spaceThemeTitle}
-                          </h4>
                         </div>
-                        <div className="shrink-0 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-indigo-200 flex items-center gap-1.5 font-mono shadow-xs select-none">
-                          <Sparkles className="w-3.5 h-3.5 text-indigo-300 animate-pulse" /> Live Interior Mockup
-                        </div>
+                        <span className="text-xs font-mono text-slate-300 font-medium select-none bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/10">
+                          {currentSentenceIdx + 1} / {sentences.length}
+                        </span>
                       </div>
 
-                      {/* Active description slide content */}
-                      <div className="relative z-10 flex-1 flex flex-col justify-center py-6 md:py-8 max-w-3xl">
-                        <span className="font-mono text-[9px] text-indigo-400 block tracking-widest uppercase font-black mb-2">
-                          Space Formulation Slide • {activeSlideIndex + 1} of {slides.length}
-                        </span>
+                      {/* Poetic description content of the space (Spacious Centered single sentence reader) */}
+                      <div className="relative z-10 flex-1 flex flex-col justify-center py-10 md:py-14 max-w-2xl mx-auto text-center px-4">
                         <AnimatePresence mode="wait">
                           <motion.p
-                            key={activeSlideIndex}
+                            key={currentSentenceIdx}
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -15 }}
-                            transition={{ duration: 0.25, ease: "easeOut" }}
-                            className="text-slate-100 text-sm md:text-base leading-relaxed font-sans font-medium drop-shadow-md select-none"
+                            transition={{ duration: 0.35, ease: "easeOut" }}
+                            className="text-slate-100 text-base md:text-xl lg:text-2xl leading-relaxed font-sans font-medium drop-shadow-md select-text whitespace-pre-wrap tracking-wide"
                           >
-                            {slides[activeSlideIndex] || ""}
+                            {activeSentence}
                           </motion.p>
                         </AnimatePresence>
                       </div>
 
-                      {/* Pagination & Indicators */}
-                      <div className="relative z-10 pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        {/* Slide Dot Indicators */}
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          {slides.map((_, i) => (
+                      {/* Beautiful branding bottom ribbon with Slide dot indicators & navigation arrows */}
+                      <div className="relative z-10 pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+                        {/* Slide Dots */}
+                        <div className="flex items-center gap-1.5">
+                          {sentences.map((_, i) => (
                             <button
                               key={i}
-                              onClick={() => setActiveSlideIndex(i)}
-                              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer
-                                ${activeSlideIndex === i 
-                                  ? "bg-indigo-400 w-3.5 scale-110 shadow-sm shadow-indigo-400" 
-                                  : "bg-white/30 hover:bg-white/50"
+                              onClick={() => {
+                                setActiveSlideIndex(i);
+                              }}
+                              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer
+                                ${currentSentenceIdx === i 
+                                  ? "w-6 bg-white" 
+                                  : "w-1.5 bg-white/40 hover:bg-white/60"
                                 }
                               `}
-                              title={`${i + 1}번째 가상 인테리어 설계 설명`}
+                              title={`${i + 1}번째 구절`}
                             />
                           ))}
                         </div>
 
                         {/* Navigation Arrows */}
-                        <div className="flex items-center gap-2 border border-white/10 bg-slate-950/70 backdrop-blur-md px-3 py-1.5 rounded-full select-none justify-between sm:justify-start">
+                        <div className="flex items-center gap-2">
                           <button
-                            disabled={activeSlideIndex === 0}
-                            onClick={() => setActiveSlideIndex(prev => prev - 1)}
-                            className="w-7 h-7 rounded-full flex items-center justify-center text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
-                            title="이전 부분"
+                            disabled={currentSentenceIdx === 0}
+                            onClick={() => {
+                              setActiveSlideIndex((prev) => prev - 1);
+                            }}
+                            className="w-9 h-9 rounded-full border border-white/10 bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+                            title="이전 구절"
                           >
                             <ChevronLeft className="w-4 h-4" />
                           </button>
-                          <span className="text-[10px] font-mono text-slate-300 font-bold px-1 select-none">
-                            {activeSlideIndex + 1} / {slides.length}
-                          </span>
                           <button
-                            disabled={activeSlideIndex === slides.length - 1}
-                            onClick={() => setActiveSlideIndex(prev => prev + 1)}
-                            className="w-7 h-7 rounded-full flex items-center justify-center text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
-                            title="다음 부분"
+                            disabled={currentSentenceIdx === sentences.length - 1}
+                            onClick={() => {
+                              setActiveSlideIndex((prev) => prev + 1);
+                            }}
+                            className="w-9 h-9 rounded-full border border-white/10 bg-black/40 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+                            title="다음 구절"
                           >
                             <ChevronRight className="w-4 h-4" />
                           </button>
@@ -1318,237 +1391,344 @@ export const ChamberWindow: React.FC<ChamberWindowProps> = ({
               })()}
 
               {/* STAGE 4: MEDITATION PROGRESSION */}
-              {step === 4 && (
-                <motion.div
-                  key="step4"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-6"
-                >
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-                    {/* Left: Breathing & Sound Station */}
-                    <div className="lg:col-span-5 bg-gradient-to-b from-indigo-50/10 to-purple-50/10 backdrop-blur-xs border border-white/60 rounded-3xl p-6 flex flex-col items-center justify-center text-center shadow-xs relative overflow-hidden">
-                      {/* Aura */}
+              {step === 4 && (() => {
+                const currentMethod = getMeditationMethodKeywords(selectedProfile?.num || 1);
+                const currentPhaseTotal = currentMethod.rhythm[breathPhase] || 1;
+                const currentPhaseElapsed = currentPhaseTotal - breathCounter;
+                const currentPhaseProgress = Math.min(100, Math.max(0, (currentPhaseElapsed / currentPhaseTotal) * 100));
+
+                if (meditationCompleted) {
+                  return (
+                    <motion.div
+                      key="meditation-completed"
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      className="space-y-8 animate-fade-in"
+                    >
+                      {/* Celebration Card */}
+                      <div className="bg-white/90 backdrop-blur-md border border-indigo-100/50 rounded-[32px] p-8 md:p-10 shadow-xl relative overflow-hidden text-center max-w-2xl mx-auto">
+                        {/* Soft ambient aura background */}
+                        <div 
+                          className="absolute w-64 h-64 opacity-10 filter blur-3xl pointer-events-none -right-12 -top-12"
+                          style={{
+                            background: selectedProfile?.colors.type === "solid" 
+                              ? selectedProfile?.colors.fill 
+                              : `linear-gradient(135deg, ${selectedProfile?.colors.leftFill}, ${selectedProfile?.colors.rightFill})`
+                          }}
+                        />
+                        <div 
+                          className="absolute w-64 h-64 opacity-10 filter blur-3xl pointer-events-none -left-12 -bottom-12"
+                          style={{
+                            background: selectedProfile?.colors.type === "solid" 
+                              ? selectedProfile?.colors.fill 
+                              : `linear-gradient(135deg, ${selectedProfile?.colors.rightFill}, ${selectedProfile?.colors.leftFill})`
+                          }}
+                        />
+
+                        <div className="relative z-10 flex flex-col items-center">
+                          {/* Success Icon Circle */}
+                          <div className="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-6 shadow-xs text-indigo-600">
+                            <CheckCircle2 className="w-8 h-8 animate-[pulse_2.5s_ease-in-out_infinite]" />
+                          </div>
+
+                          <span className="font-mono text-[10px] text-indigo-500 uppercase tracking-widest font-black block mb-2">
+                            Mindfulness Ritual Completed
+                          </span>
+                          
+                          <h4 className="font-serif text-2xl font-black text-slate-900 leading-tight">
+                            기품 깊은 정화 수련 완료
+                          </h4>
+
+                          <p className="text-slate-600 text-sm mt-4 leading-relaxed font-sans max-w-md">
+                            "5회의 평온한 호흡 주기 조율이 성공적으로 끝마쳤습니다! 당신이 설계한 치유의 침실 주파수 속에서 마침내 정서와 슬픔이 곱게 흩어지며, 마음속 자율신경계가 안정적인 평형 상태를 복원해 가고 있습니다. 한껏 맑아진 마음의 기후를 가만히 누려 보십시오."
+                          </p>
+
+                          {/* Quick Actions inside completed view */}
+                          <div className="mt-8 flex flex-wrap gap-3 justify-center">
+                            <button
+                              onClick={resetTimer}
+                              className="flex items-center gap-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-5 rounded-xl transition-all shadow-md shadow-indigo-100 cursor-pointer"
+                            >
+                              명상 한번 더 하기 <RotateCcw className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={onReset}
+                              className="flex items-center gap-1.5 text-xs bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-5 rounded-xl transition-all shadow-md cursor-pointer"
+                            >
+                              다른 방 설계하기 <Palette className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Deep Analysis Component inside the final completed view as requested */}
+                      <div className="border-t border-slate-200/50 pt-8">
+                        <div className="max-w-4xl mx-auto">
+                          <div className="mb-6 flex flex-col items-center text-center">
+                            <span className="font-mono text-[9px] text-[#4E412C] font-black bg-amber-50/80 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider block w-fit">
+                              Archive Deep Progression Analysis (아카이브 심화분석)
+                            </span>
+                            <h4 className="font-serif text-xl font-bold text-slate-900 mt-2">차원적 무의식 아카이빙 진찰 리포트</h4>
+                            <p className="text-slate-400 text-xs mt-1">지금껏 누적된 치유 주파수 데이터와 평온의 궤적을 심화 분석한 최종 임상 소견입니다.</p>
+                          </div>
+                          
+                          <DeepAnalysis 
+                            historyList={historyList} 
+                            onSelectItem={(num) => {
+                              onSelectItem(num);
+                              setStep(2); // take back to Step 2 when selecting an archive item
+                            }}
+                            onClearHistory={onClearHistory}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                }
+
+                return (
+                  <motion.div
+                    key="step4"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-6"
+                  >
+                    {/* 1. Personalized Prescription card at the very top of Step 4 */}
+                    <div className="bg-white/95 border border-amber-200/50 shadow-md rounded-3xl p-6 relative overflow-hidden">
+                      {/* Ambient Aura Background */}
                       <div 
-                        className="absolute w-56 h-56 opacity-10 filter blur-3xl pointer-events-none"
+                        className="absolute w-72 h-72 opacity-[0.06] filter blur-3xl pointer-events-none -right-16 -top-16"
                         style={{
-                          background: selectedProfile.colors.type === "solid" 
-                            ? selectedProfile.colors.fill 
-                            : `linear-gradient(135deg, ${selectedProfile.colors.leftFill}, ${selectedProfile.colors.rightFill})`
+                          background: selectedProfile?.colors.type === "solid" 
+                            ? selectedProfile?.colors.fill 
+                            : `linear-gradient(135deg, ${selectedProfile?.colors.leftFill}, ${selectedProfile?.colors.rightFill})`
                         }}
                       />
 
-                      <span className="font-mono text-[9px] text-indigo-500 uppercase tracking-widest block mb-4 font-black">
-                        Respiration Coach
-                      </span>
-
-                      {/* Mini Breathing Sphere */}
-                      <div className="relative w-36 h-36 flex items-center justify-center mb-4">
-                        <motion.div
-                          animate={{
-                            scale: getBreathCircleScale(),
-                          }}
-                          transition={{ duration: 1.0, ease: "linear" }}
-                          className={`absolute w-20 h-20 rounded-full border transition-colors duration-500 flex items-center justify-center shadow-md ${getBreathColorClass()}`}
-                        />
-
-                        {/* Digital countdown */}
-                        <div className="relative z-20 flex flex-col items-center">
-                          <span className="font-mono text-[10px] text-indigo-100 font-bold tracking-wider leading-none mb-1">
-                            {currentStepIdx + 1}단계 / {totalSteps}단계
-                          </span>
-                          <span className="font-mono text-3xl font-black text-slate-950 tracking-tight leading-none">
-                            {formatTime(stepSecondsLeft)}
-                          </span>
-                          <span className="font-mono text-[9px] text-slate-500 mt-1 font-bold tracking-wider leading-none">
-                            {breathPhase === "hold" ? `지 (Hold)` : breathPhase === "inhale" ? `흡 (Inhale)` : `호 (Exhale)`} {breathCounter}s
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Guide badge */}
-                      <div className="mb-5 h-6">
-                        <span className="text-[11px] font-bold text-indigo-950 px-3 py-1 rounded-full bg-indigo-50/85 border border-indigo-100/20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                          {getBreathLabel()}
-                        </span>
-                      </div>
-
-                      {/* Controls Row */}
-                      <div className="flex flex-wrap items-center justify-center gap-2 w-full">
-                        <button
-                          onClick={toggleTimer}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-xs font-bold flex items-center gap-1 transition-all shadow-sm"
-                        >
-                          {timerActive ? (
-                            <>
-                              <Pause className="w-3.5 h-3.5" /> 멈춤
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-3.5 h-3.5" /> 호흡 시작
-                            </>
-                          )}
-                        </button>
-
-                        <button
-                          onClick={toggleSound}
-                          className={`text-xs px-3 py-2 rounded-xl border flex items-center gap-1 transition-all ${
-                            soundPlaying
-                              ? "bg-indigo-50 text-indigo-700 border-indigo-200"
-                              : "bg-white text-slate-600 border-slate-200 hover:border-indigo-200"
-                          }`}
-                        >
-                          {soundPlaying ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                          {soundPlaying ? "소리 끄기" : "배경음 켜기"}
-                        </button>
-
-                        <button
-                          onClick={resetTimer}
-                          className="border border-slate-200 hover:border-indigo-200 bg-white text-slate-500 rounded-xl p-2 transition-all"
-                          title="시간 초기화"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      <div className="mt-4 text-[10px] text-slate-450 font-sans space-y-1">
-                        <div>
-                          추천 사운드환경: <strong className="text-indigo-600 font-bold">{healingData.meditationAmbientSoundName}</strong>
-                        </div>
-                        <div className="font-mono text-slate-400">
-                          전체 남은 세션 시간: <strong className="text-slate-650 font-extrabold">{formatTime(totalSeconds)}</strong>
-                        </div>
-                      </div>
-
-                      {/* Live BGM Presets Panel in Step 4 */}
-                      <div className="mt-5 pt-4 border-t border-slate-100/40 w-full text-left font-sans">
-                        <span className="text-[9px] font-mono font-black text-slate-450 block tracking-wider uppercase mb-2">
-                          BGM 사운드테마 변경 ({BGM_PRESETS.find(p => p.id === selectedBgmId)?.frequencyName || "Cosmic"})
-                        </span>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          {BGM_PRESETS.map((p) => {
-                            const isSelected = selectedBgmId === p.id;
-                            return (
-                              <button
-                                key={p.id}
-                                onClick={() => {
-                                  setSelectedBgmId(p.id);
-                                  if (soundPlaying) {
-                                    stopHealingSound();
-                                    setTimeout(() => {
-                                      startHealingSound(p.id);
-                                    }, 800);
-                                  } else {
-                                    startHealingSound(p.id);
-                                  }
-                                }}
-                                className={`text-[10px] text-left p-2 rounded-xl border transition-all truncate cursor-pointer ${
-                                  isSelected
-                                    ? "bg-indigo-600 text-white border-indigo-600 font-bold shadow-sm"
-                                    : "bg-white border-slate-200/60 text-slate-700 hover:bg-slate-50/50 hover:border-slate-300"
-                                }`}
-                                title={p.name}
-                              >
-                                {p.name.split(" ")[0]}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Right: Personalized Prescription & Meditation Guide */}
-                    <div className="lg:col-span-7 flex flex-col justify-between gap-6">
-                      {/* Unified prescription header */}
-                      <div className="bg-white/80 border border-white/60 shadow-xs rounded-2xl p-5 relative overflow-hidden">
-                        <div 
-                          className="absolute w-40 h-40 opacity-5 filter blur-3xl pointer-events-none -right-10 -top-10"
-                          style={{
-                            background: selectedProfile.colors.type === "solid" 
-                              ? selectedProfile.colors.fill 
-                              : `linear-gradient(135deg, ${selectedProfile.colors.leftFill}, ${selectedProfile.colors.rightFill})`
-                          }}
-                        />
-
-                        <div className="relative z-10 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                          <div>
-                            <span className="font-mono text-[9px] text-[#4E412C] font-black bg-amber-50 border border-amber-200/55 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                              Personalized Prescription
+                      <div className="relative z-10 flex flex-col gap-6">
+                        {/* Header metadata row */}
+                        <div className="border-b border-slate-100 pb-5">
+                          <div className="space-y-1.5">
+                            <span className="font-mono text-[9px] text-[#4E412C] font-black bg-amber-50/80 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-wider block w-fit">
+                              Step 4: Personalized Prescription & Guided Respiration
                             </span>
-                            <div className="mt-2.5 flex items-baseline gap-2">
-                              <span className="text-[10px] font-bold text-slate-400">진단 처방:</span>
-                              <h4 className="font-serif text-base font-extrabold text-slate-900 leading-snug">
-                                {recommendedHealingBehaviors[selectedProfile.num]?.action || "정서 조율 명상"}
+                            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 pt-1.5">
+                              <span className="text-[12px] font-bold text-slate-400">진단 처방행동:</span>
+                              <h4 className="font-serif text-lg font-extrabold text-[#111827]">
+                                {recommendedHealingBehaviors[selectedProfile?.num || 1]?.action || "정서 조율 명상"}
                               </h4>
                             </div>
-                            <div className="mt-1 flex items-baseline gap-2">
-                              <span className="text-[10px] font-bold text-slate-400">치유 핵심:</span>
-                              <p className="text-xs text-slate-700 font-medium whitespace-pre-wrap">
-                                {recommendedHealingBehaviors[selectedProfile.num]?.core || "마음을 열어 고요 속에 호흡과 소리를 동치시킵니다."}
+                            <div className="flex items-center gap-2 pt-1 font-medium text-slate-600 font-sans text-xs">
+                              <span className="text-[11px] font-bold text-slate-400">치유의 핵심:</span>
+                              <span>{recommendedHealingBehaviors[selectedProfile?.num || 1]?.core || "마음을 열어 고요 속에 호흡과 소리를 동치시킵니다."}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Step-by-Step breathing coach description */}
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-[11px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                              🌬️ 맞춤형 의학 조율 단계별 호흡법 ({currentMethod.rhythm.inhale}s - {currentMethod.rhythm.hold}s - {currentMethod.rhythm.exhale}s 템포)
+                            </span>
+                            <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-bold font-mono">
+                              구조화된 5회 반복 기압 적용
+                            </span>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Inhale */}
+                            <div className="bg-indigo-50/40 border border-indigo-100/40 rounded-2xl p-4 flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-black text-indigo-900 flex items-center gap-2">
+                                  <span className="w-5 h-5 rounded-md bg-indigo-100/70 text-indigo-700 text-[11px] flex items-center justify-center font-black">1</span>
+                                  마음 들이쉬기 (들숨)
+                                </span>
+                                <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100/50 px-2.5 py-0.5 rounded-full">
+                                  {currentMethod.rhythm.inhale}초간
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-600 leading-relaxed font-sans">
+                                가슴을 곧게 펴고 코끝을 타고 드나드는 차분한 공기에 집중해 보세요. {currentMethod.rhythm.inhale}초 동안 우주의 온화하고 기품 어린 생명력을 폐 깊숙이 가만히 빨아들입다.
+                              </p>
+                            </div>
+
+                            {/* Hold */}
+                            <div className="bg-emerald-50/40 border border-emerald-100/40 rounded-2xl p-4 flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-black text-emerald-950 flex items-center gap-2">
+                                  <span className="w-5 h-5 rounded-md bg-emerald-100/70 text-emerald-700 text-[11px] flex items-center justify-center font-black">2</span>
+                                  치유 머금기 (보흡)
+                                </span>
+                                <span className="font-mono text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-100/50 px-2.5 py-0.5 rounded-full">
+                                  {currentMethod.rhythm.hold}초간
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-600 leading-relaxed font-sans">
+                                {currentMethod.rhythm.hold > 0 ? (
+                                  `들이쉬어 가득 채운 호흡을 부드럽게 고정합니다. ${currentMethod.rhythm.hold}초 동안 신선한 치유의 생체 주파수가 심장과 자율신경계 온몸 전반에 골고루 스며들어 번짐을 느껴봅니다.`
+                                ) : (
+                                  `긴장 이완율을 극대화하기 위해 정체 주기 없이 즉시 부드럽게 날숨으로 순환을 이어 가십시오. 숨가쁨을 딛고 리드미컬하게 다음 기어에 닿을 수 있습니다.`
+                                )}
+                              </p>
+                            </div>
+
+                            {/* Exhale */}
+                            <div className="bg-cyan-50/45 border border-cyan-100/40 rounded-2xl p-4 flex flex-col gap-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-black text-cyan-500 flex items-center gap-2">
+                                  <span className="w-5 h-5 rounded-md bg-cyan-100/70 text-cyan-700 text-[11px] flex items-center justify-center font-black">3</span>
+                                  슬픔 비워내기 (날숨)
+                                </span>
+                                <span className="font-mono text-xs font-bold text-cyan-600 bg-cyan-50 border border-cyan-100/50 px-2.5 py-0.5 rounded-full">
+                                  {currentMethod.rhythm.exhale}초간
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-600 leading-relaxed font-sans">
+                                입술을 작게 불어 {currentMethod.rhythm.exhale}초 동안 전신에 머물던 묵은 상념, 긴장 잔여물, 감정의 앙금들을 치유 공간의 안착된 공기 속으로 흩뿌려 비워냅니다.
                               </p>
                             </div>
                           </div>
-
-                          <button
-                            onClick={toggleSpeaking}
-                            className={`shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full transition-all duration-300 flex items-center gap-1 border shadow-xs select-none cursor-pointer
-                              ${isReading 
-                                ? "bg-emerald-50 text-emerald-700 border-emerald-300 animate-pulse" 
-                                : "bg-indigo-50/50 text-indigo-700 border-indigo-100 hover:bg-indigo-100"
-                              }
-                            `}
-                          >
-                            <Volume2 className="w-3.5 h-3.5" />
-                            {isReading ? "낭독 중지" : "낭독 지원"}
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Meditation Steps */}
-                      <div className="space-y-2.5 flex-1 flex flex-col justify-center">
-                        <span className="font-mono text-[10px] text-indigo-400 block tracking-widest uppercase font-black">
-                          {healingData.meditationTitle || "Mindful Steps"}
-                        </span>
-                        
-                        <div className="space-y-2">
-                          {healingData.meditationSteps.slice(0, 5).map((stepInstruction, index) => {
-                            const isCurrent = timerActive 
-                              ? currentStepIdx === index 
-                              : (isReading ? readingIndex === index : index === 0);
-                            return (
-                              <div
-                                key={index}
-                                className={`p-3 rounded-xl transition-all duration-300 flex items-center gap-3 border shadow-[0_1px_2px_rgba(0,0,0,0.01)]
-                                  ${isCurrent
-                                    ? "bg-indigo-50/90 border-indigo-200 shadow-xs translate-x-1"
-                                    : "bg-white/50 hover:bg-white/80 border-slate-100"
-                                  }
-                                `}
-                              >
-                                <div className={`w-5 h-5 rounded-md font-mono text-[10px] font-bold flex items-center justify-center shrink-0 border transition-all duration-300
-                                  ${isCurrent
-                                    ? "bg-indigo-600 text-white border-indigo-600"
-                                    : "bg-indigo-50 text-indigo-650 border-indigo-150"
-                                  }
-                                `}>
-                                  {index + 1}
-                                </div>
-                                <p className={`text-xs leading-relaxed font-sans transition-colors duration-300
-                                  ${isCurrent ? "text-indigo-950 font-bold" : "text-slate-650"}
-                                `}>
-                                  {stepInstruction}
-                                </p>
-                              </div>
-                            );
-                          })}
                         </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
+
+                    {/* 2. Audio timer controls */}
+                    <div className="max-w-xl mx-auto w-full">
+                      {/* Breathing & Sound Station */}
+                      <div className="bg-gradient-to-b from-indigo-50/10 to-purple-50/10 backdrop-blur-xs border border-white/60 rounded-3xl p-8 flex flex-col items-center justify-center text-center shadow-xs relative overflow-hidden">
+                        {/* Aura */}
+                        <div 
+                          className="absolute w-56 h-56 opacity-10 filter blur-3xl pointer-events-none"
+                          style={{
+                            background: selectedProfile?.colors.type === "solid" 
+                              ? selectedProfile?.colors.fill 
+                              : `linear-gradient(135deg, ${selectedProfile?.colors.leftFill}, ${selectedProfile?.colors.rightFill})`
+                          }}
+                        />
+
+                        <span className="font-mono text-[9px] text-indigo-500 uppercase tracking-widest block mb-4 font-black">
+                          Respiration Coach
+                        </span>
+
+                        {/* Mini Breathing Sphere */}
+                        <div className="relative w-36 h-36 flex items-center justify-center mb-4">
+                          <motion.div
+                            animate={{
+                              scale: getBreathCircleScale(),
+                            }}
+                            transition={{ duration: 1.0, ease: "linear" }}
+                            className={`absolute w-20 h-20 rounded-full border transition-colors duration-500 flex items-center justify-center shadow-md ${getBreathColorClass()}`}
+                          />
+
+                          {/* Digital countdown */}
+                          <div className="relative z-20 flex flex-col items-center">
+                            <span className="font-mono text-[11px] font-black text-indigo-700 bg-indigo-50/90 px-2 py-0.5 rounded-full border border-indigo-200/40 mb-2 shadow-xs animate-bounce" style={{ animationDuration: "3s" }}>
+                              {currentStepIdx + 1} / 5회
+                            </span>
+                            <span className="font-mono text-3xl font-black text-slate-950 tracking-tight leading-none">
+                              {formatTime(stepSecondsLeft)}
+                            </span>
+                            <span className="font-mono text-[9px] text-slate-500 mt-1.5 font-bold tracking-wider leading-none">
+                              {breathPhase === "hold" ? `지 (Hold)` : breathPhase === "inhale" ? `흡 (Inhale)` : `호 (Exhale)`} {breathCounter}s
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Guide badge */}
+                        <div className="mb-5 h-6">
+                          <span className="text-[11px] font-bold text-indigo-950 px-3 py-1 rounded-full bg-indigo-50/85 border border-indigo-100/20 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+                            {getBreathLabel()}
+                          </span>
+                        </div>
+
+                        {/* Controls Row */}
+                        <div className="flex flex-wrap items-center justify-center gap-2 w-full">
+                          <button
+                            onClick={toggleTimer}
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-4 py-2 text-xs font-bold flex items-center gap-1 transition-all shadow-sm cursor-pointer"
+                          >
+                            {timerActive ? (
+                              <>
+                                <Pause className="w-3.5 h-3.5" /> 멈춤
+                              </>
+                            ) : (
+                              <>
+                                <Play className="w-3.5 h-3.5" /> 호흡 시작
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            onClick={toggleSound}
+                            className={`text-xs px-3 py-2 rounded-xl border flex items-center gap-1 transition-all cursor-pointer ${
+                              soundPlaying
+                                ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+                                : "bg-white text-slate-600 border-slate-200 hover:border-indigo-200"
+                            }`}
+                          >
+                            {soundPlaying ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                            {soundPlaying ? "소리 끄기" : "배경음 켜기"}
+                          </button>
+
+                          <button
+                            onClick={resetTimer}
+                            className="border border-slate-200 hover:border-indigo-200 bg-white text-slate-500 rounded-xl p-2 transition-all cursor-pointer"
+                            title="시간 초기화"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+
+                        <div className="mt-4 text-[10px] text-slate-450 font-sans space-y-1">
+                          <div>
+                            추천 사운드환경: <strong className="text-indigo-600 font-bold">{healingData.meditationAmbientSoundName}</strong>
+                          </div>
+                        </div>
+
+                        {/* Live BGM Presets Panel in Step 4 */}
+                        <div className="mt-4 pt-4 border-t border-slate-100/40 w-full text-left font-sans">
+                          <span className="text-[9px] font-mono font-black text-slate-450 block tracking-wider uppercase mb-2">
+                            BGM 사운드테마 변경 ({BGM_PRESETS.find(p => p.id === selectedBgmId)?.frequencyName || "Cosmic"})
+                          </span>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {BGM_PRESETS.map((p) => {
+                              const isSelected = selectedBgmId === p.id;
+                              return (
+                                <button
+                                  key={p.id}
+                                  onClick={() => {
+                                    setSelectedBgmId(p.id);
+                                    if (soundPlaying) {
+                                      stopHealingSound();
+                                      setTimeout(() => {
+                                        startHealingSound(p.id);
+                                      }, 800);
+                                    } else {
+                                      startHealingSound(p.id);
+                                    }
+                                  }}
+                                  className={`text-[10px] text-left p-2 rounded-xl border transition-all truncate cursor-pointer ${
+                                    isSelected
+                                      ? "bg-indigo-600 text-white border-indigo-600 font-bold shadow-sm"
+                                      : "bg-white border-slate-200/60 text-slate-700 hover:bg-slate-50/50 hover:border-slate-300"
+                                  }`}
+                                  title={p.name}
+                                >
+                                  {p.name.split(" ")[0]}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })()}
             </div>
 
             {/* Bottom step switcher buttons block */}
