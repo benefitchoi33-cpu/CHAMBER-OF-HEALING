@@ -6,17 +6,17 @@ interface ColorCircleProps {
   size?: number;
 }
 
-export const ColorCircle: React.FC<ColorCircleProps> = ({ profile, size = 52 }) => {
+export const ColorCircle: React.FC<ColorCircleProps & { className?: string }> = ({ profile, size, className }) => {
   const { colors } = profile;
+  const dim = size ? `${size}px` : undefined;
 
   if (colors.type === "solid") {
     // Solid color circle
     return (
       <svg
-        width={size}
-        height={size}
+        style={dim ? { width: dim, height: dim } : undefined}
         viewBox="0 0 100 100"
-        className="drop-shadow-sm transition-transform duration-200"
+        className={`drop-shadow-sm transition-transform duration-200 ${className || ""}`}
       >
         <circle
           cx="50"
@@ -32,10 +32,9 @@ export const ColorCircle: React.FC<ColorCircleProps> = ({ profile, size = 52 }) 
     // Split color circle (left/right)
     return (
       <svg
-        width={size}
-        height={size}
+        style={dim ? { width: dim, height: dim } : undefined}
         viewBox="0 0 100 100"
-        className="drop-shadow-sm transition-transform duration-200"
+        className={`drop-shadow-sm transition-transform duration-200 ${className || ""}`}
       >
         {/* Right side backing */}
         <circle
@@ -85,7 +84,7 @@ export const ColorGrid: React.FC<ColorGridProps> = ({ onSelect, selectedNum }) =
         </p>
       </div>
 
-      <div className="grid grid-cols-6 sm:grid-cols-9 md:grid-cols-9 lg:grid-cols-9 gap-1.5 sm:gap-3 md:gap-4 relative z-10">
+      <div className="grid grid-cols-9 gap-1 sm:gap-3 md:gap-4 relative z-10 justify-items-center">
         {Object.values(colorProfiles).map((profile) => {
           const isSelected = selectedNum === profile.num;
           return (
@@ -93,7 +92,7 @@ export const ColorGrid: React.FC<ColorGridProps> = ({ onSelect, selectedNum }) =
               key={profile.num}
               id={`color-circle-btn-${profile.num}`}
               onClick={() => onSelect(profile.num)}
-              className={`relative flex flex-col items-center justify-center p-1 sm:p-2 rounded-xl transition-all duration-300 group
+              className={`relative flex flex-col items-center justify-center p-0.5 sm:p-2 rounded-xl transition-all duration-300 group w-full aspect-square
                 ${
                   isSelected
                     ? "bg-white/80 ring-2 ring-indigo-500/20 border border-indigo-200/50 shadow-md transform scale-105"
@@ -106,9 +105,12 @@ export const ColorGrid: React.FC<ColorGridProps> = ({ onSelect, selectedNum }) =
                 className={`absolute inset-0 rounded-xl bg-radial from-indigo-100/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none`}
               />
 
-              {/* Programmatic SVG Color Circle */}
-              <div className="relative group-hover:scale-110 transition-transform duration-200 z-10">
-                <ColorCircle profile={profile} size={36} />
+              {/* Programmatic SVG Color Circle - Responsive size via className */}
+              <div className="relative group-hover:scale-110 transition-transform duration-200 z-10 flex items-center justify-center">
+                <ColorCircle 
+                  profile={profile} 
+                  className="w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 md:w-11 md:h-11" 
+                />
               </div>
             </button>
           );

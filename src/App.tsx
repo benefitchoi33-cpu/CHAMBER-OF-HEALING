@@ -74,6 +74,24 @@ export default function App() {
     const storedHistory = [...historyList];
     const prevNumbers = storedHistory.map((item) => item.num);
 
+    // Save selection to archive INSTANTLY to be 100% robust on mobile and offline
+    const now = new Date();
+    const timestampStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    
+    const newHistoryItem: HistoryItem = {
+      timestamp: timestampStr,
+      num: num,
+      title: profile.title,
+    };
+
+    const updatedHistory = [newHistoryItem, ...storedHistory];
+    setHistoryList(updatedHistory);
+    try {
+      localStorage.setItem("healing_vault_history", JSON.stringify(updatedHistory));
+    } catch (e) {
+      console.warn("localStorage item set failed:", e);
+    }
+
     try {
       const response = await fetch("/api/healing-guide", {
         method: "POST",
@@ -90,20 +108,6 @@ export default function App() {
       }
 
       setHealingData(data);
-
-      // Append new selection to the timeline history
-      const now = new Date();
-      const timestampStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
-      
-      const newHistoryItem: HistoryItem = {
-        timestamp: timestampStr,
-        num: num,
-        title: profile.title,
-      };
-
-      const updatedHistory = [newHistoryItem, ...storedHistory];
-      setHistoryList(updatedHistory);
-      localStorage.setItem("healing_vault_history", JSON.stringify(updatedHistory));
     } catch (error) {
       console.error("Error creating healing chamber:", error);
       // Fallback local schema if server or internet is spotty, keeping app bullet-proof
